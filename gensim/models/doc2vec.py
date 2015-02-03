@@ -185,9 +185,11 @@ class Doc2Vec(Word2Vec):
                           sg=(1+dm) % 2, hs=hs, negative=negative, cbow_mean=dm_mean, **kwargs)
         self.train_words = train_words
         self.train_lbls = train_lbls
+        self.labels = set()
         if sentences is not None:
             self.build_vocab(sentences)
             self.train(sentences)
+            self.labels |= self._labels_from(sentences)
 
     @staticmethod
     def _vocab_from(sentences):
@@ -235,6 +237,28 @@ class Doc2Vec(Word2Vec):
         kwargs['ignore'] = kwargs.get('ignore', ['syn0norm'])  # don't bother storing the cached normalized vectors
         super(Doc2Vec, self).save(*args, **kwargs)
 
+    @staticmethod
+    def _labels_from(sentences):
+        labels = set()
+        for sentence in sentences:
+            labels |= set(sentence.labels)
+        return labels
+
+    def most_similar_labels(self, positive=[], negative=[], topn=10):
+        """
+        Find the top-N most similar labels.
+        """
+        result = self.most_similar(positive=positive, negative=[], topn=len(self.vocab))
+        result = [(k, v) for (k, v) in result if k in self.labels]
+        return result
+
+    def most_similar_words(self, positive=[], negative=[], topn=10):
+        """
+        Find the top-N most similar labels.
+        """
+        result = self.most_similar(positive=positive, negative=[], topn=len(self.vocab))
+        result = [(k, v) for (k, v) in result if k not in self.labels]
+        return result
 
 class LabeledBrownCorpus(object):
     """Iterate over sentences from the Brown corpus (part of NLTK data), yielding
@@ -293,3 +317,24 @@ class LabeledLineSentence(object):
             with utils.smart_open(self.source) as fin:
                 for item_no, line in enumerate(fin):
                     yield LabeledSentence(utils.to_unicode(line).split(), ['SENT_%s' % item_no])
+
+class LabeledListSentence(object):
+    """one sentence = list of words
+
+    labels are constructed automatically from the sentence line number."""
+    def __init__(self, words_list):
+        """
+        words_list like:
+
+            words_list = [
+                ['human', 'interface', 'computer'],
+                ['survey', 'user', 'computer', 'system', 'response', 'time'],
+                ['eps', 'user', 'interface', 'system'],
+            ]
+
+        """
+        self.words_list = words_list
+
+    def __iter__(self):
+        for i, words in enumerate(self.words_list):
+            yield LabeledSentence(words, ['SENT_{0}'.format(i)])
