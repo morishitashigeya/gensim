@@ -189,7 +189,7 @@ class Doc2Vec(Word2Vec):
         if sentences is not None:
             self.build_vocab(sentences)
             self.train(sentences)
-            self.labels |= self._labels_from(sentences)
+            self.build_labels(sentences)
 
     @staticmethod
     def _vocab_from(sentences):
@@ -237,6 +237,9 @@ class Doc2Vec(Word2Vec):
         kwargs['ignore'] = kwargs.get('ignore', ['syn0norm'])  # don't bother storing the cached normalized vectors
         super(Doc2Vec, self).save(*args, **kwargs)
 
+    def build_labels(self, sentences):
+        self.labels |= self._labels_from(sentences)
+
     @staticmethod
     def _labels_from(sentences):
         labels = set()
@@ -254,7 +257,7 @@ class Doc2Vec(Word2Vec):
 
     def most_similar_words(self, positive=[], negative=[], topn=10):
         """
-        Find the top-N most similar labels.
+        Find the top-N most similar words.
         """
         result = self.most_similar(positive=positive, negative=[], topn=len(self.vocab))
         result = [(k, v) for (k, v) in result if k not in self.labels]
