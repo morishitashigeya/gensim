@@ -251,7 +251,7 @@ class Doc2Vec(Word2Vec):
         """
         Find the top-N most similar labels.
         """
-        result = self.most_similar(positive=positive, negative=[], topn=len(self.vocab))
+        result = self.most_similar(positive=positive, negative=negative, topn=len(self.vocab))
         result = [(k, v) for (k, v) in result if k in self.labels]
         return result[:topn]
 
@@ -259,7 +259,7 @@ class Doc2Vec(Word2Vec):
         """
         Find the top-N most similar words.
         """
-        result = self.most_similar(positive=positive, negative=[], topn=len(self.vocab))
+        result = self.most_similar(positive=positive, negative=negative, topn=len(self.vocab))
         result = [(k, v) for (k, v) in result if k not in self.labels]
         return result[:topn]
 
@@ -334,6 +334,7 @@ class LabeledListSentence(object):
                 ['survey', 'user', 'computer', 'system', 'response', 'time'],
                 ['eps', 'user', 'interface', 'system'],
             ]
+            sentence = LabeledListSentence(words_list)
 
         """
         self.words_list = words_list
