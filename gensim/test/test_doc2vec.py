@@ -26,6 +26,7 @@ class TestDoc2VecModel(unittest.TestCase):
         model = doc2vec.Doc2Vec(labeledSentence, min_count=0)
         self.assertIn('SENT_1', dict(model.most_similar_labels('SENT_0')))
         self.assertIn('interface', dict(model.most_similar_words('human')))
+        self.assertIn('interface', dict(model.most_similar_vocab(positive='human', vocab=['interface'])))
 
 
 if __name__ == '__main__':
