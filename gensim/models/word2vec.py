@@ -657,7 +657,7 @@ class Word2Vec(utils.SaveLoad):
                 mean.append(weight * self.syn0norm[self.vocab[word].index])
                 all_words.add(self.vocab[word].index)
             else:
-                raise KeyError("word '%s' not in vocabulary" % word)
+                logging.error(KeyError("word '%s' not in vocabulary" % word))
         if not mean:
             raise ValueError("cannot compute similarity with no input")
         mean = matutils.unitvec(array(mean).mean(axis=0)).astype(REAL)
