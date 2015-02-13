@@ -263,6 +263,14 @@ class Doc2Vec(Word2Vec):
         result = [(k, v) for (k, v) in result if k not in self.labels]
         return result[:topn]
 
+    def most_similar_vocab(self, positive=[], negative=[], vocab=[], topn=10):
+        """
+        Find the top-N most similar words in vocab list.
+        """
+        result = self.most_similar(positive=positive, negative=negative, topn=len(self.vocab))
+        result = [(k, v) for (k, v) in result if k in vocab]
+        return result[:topn]
+
 class LabeledBrownCorpus(object):
     """Iterate over sentences from the Brown corpus (part of NLTK data), yielding
     each sentence out as a LabeledSentence object."""
