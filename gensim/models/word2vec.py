@@ -709,8 +709,8 @@ class Word2Vec(utils.SaveLoad):
             else:
                 logging.error(KeyError("word '%s' not in vocabulary" % word))
 
-        positive = [word_vec(word) for word in positive]
-        negative = [word_vec(word) for word in negative]
+        positive = [word_vec(word) for word in positive if word is not None]
+        negative = [word_vec(word) for word in negative if word is not None]
         if not positive:
             raise ValueError("cannot compute similarity with no input")
 
