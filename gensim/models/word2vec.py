@@ -707,7 +707,7 @@ class Word2Vec(utils.SaveLoad):
                 all_words.add(self.vocab[word].index)
                 return self.syn0norm[self.vocab[word].index]
             else:
-                raise KeyError("word '%s' not in vocabulary" % word)
+                logging.error(KeyError("word '%s' not in vocabulary" % word))
 
         positive = [word_vec(word) for word in positive]
         negative = [word_vec(word) for word in negative]
